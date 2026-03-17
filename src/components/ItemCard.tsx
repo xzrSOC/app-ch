@@ -1,5 +1,5 @@
 import { Star, MapPin, Leaf, Shield } from "lucide-react";
-import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 interface ItemCardProps {
   title: string;
@@ -13,70 +13,62 @@ interface ItemCardProps {
   category: string;
 }
 
-const ItemCard = ({
-  title,
-  price,
-  image,
-  distance,
-  rating,
-  reviews,
-  co2Saved,
-  isPro,
-  category,
-}: ItemCardProps) => {
+const ItemCard = ({ title, price, image, distance, rating, reviews, co2Saved, isPro, category }: ItemCardProps) => {
+  const { toast } = useToast();
+
+  const handleClick = () => {
+    toast({
+      title: "Connexion requise",
+      description: "Connecte-toi pour voir cette annonce.",
+      duration: 2500,
+    });
+  };
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-      className="group shadow-card hover:shadow-card-hover rounded-2xl bg-card overflow-hidden transition-shadow duration-200 cursor-pointer"
+    <div
+      onClick={handleClick}
+      className="relative bg-card rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-1"
     >
-      <div className="relative aspect-[4/3] overflow-hidden p-1">
+      {/* Image fixe 160px max, bien cadree */}
+      <div className="relative overflow-hidden" style={{ height: "160px" }}>
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-cover rounded-xl"
-          loading="lazy"
+          className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105"
         />
         {isPro && (
-          <span className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-lg bg-accent/90 text-accent-foreground text-xs font-medium backdrop-blur-sm">
-            <Shield className="w-3 h-3" />
-            Pro
-          </span>
+          <div className="absolute top-2 left-2 flex items-center gap-1 bg-accent text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow">
+            <Shield size={10} /> Pro
+          </div>
         )}
-        <span className="absolute top-3 right-3 px-2 py-1 rounded-lg bg-card/80 text-xs font-medium backdrop-blur-sm text-foreground">
+        <div className="absolute top-2 right-2 bg-black/40 backdrop-blur-sm text-white text-[10px] font-medium px-2 py-0.5 rounded-full">
           {category}
-        </span>
+        </div>
       </div>
 
-      <div className="p-3 space-y-2">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-sm text-foreground leading-tight line-clamp-1">
-            {title}
-          </h3>
-          <div className="flex items-center gap-0.5 shrink-0">
-            <Star className="w-3.5 h-3.5 fill-foreground text-foreground" />
-            <span className="text-xs font-medium tabular-nums">{rating.toFixed(1)}</span>
-            <span className="text-xs text-muted-foreground">({reviews})</span>
+      {/* Content */}
+      <div className="p-3 space-y-1.5">
+        <h3 className="font-semibold text-sm text-foreground line-clamp-1">{title}</h3>
+        <div className="flex items-center gap-1">
+          <Star size={12} className="fill-yellow-400 text-yellow-400" />
+          <span className="text-xs font-medium">{rating.toFixed(1)}</span>
+          <span className="text-xs text-muted-foreground">({reviews})</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-bold text-primary">
+            {price}<span className="text-xs font-normal text-muted-foreground">/jour</span>
+          </span>
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <MapPin size={11} />
+            <span className="text-xs">{distance}</span>
           </div>
         </div>
-
-        <div className="flex items-center justify-between">
-          <p className="text-base font-semibold tabular-nums text-foreground">
-            {price}€<span className="text-xs font-normal text-muted-foreground">/jour</span>
-          </p>
-          <span className="flex items-center gap-1 text-xs text-muted-foreground">
-            <MapPin className="w-3 h-3" />
-            {distance}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-1 text-xs text-primary font-medium">
-          <Leaf className="w-3 h-3" />
-          <span>Économie de {co2Saved} CO₂</span>
+        <div className="flex items-center gap-1 text-green-600 bg-green-50 rounded-lg px-2 py-1">
+          <Leaf size={11} />
+          <span className="text-[10px] font-medium">Economie de {co2Saved} CO2</span>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

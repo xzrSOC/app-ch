@@ -1,65 +1,82 @@
 import { Search, PlusCircle, MessageSquare, User, Compass } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 interface NavItem {
   icon: React.ElementType;
   label: string;
   path: string;
-  locked: boolean;
+  requiresAuth: boolean;
 }
 
 const navItems: NavItem[] = [
-  { icon: Compass, label: "Explorer", path: "/explorer", locked: false },
-  { icon: Search, label: "Recherche", path: "/search", locked: false },
-  { icon: PlusCircle, label: "Louer", path: "/create", locked: false },
-  { icon: MessageSquare, label: "Messages", path: "/messages", locked: false },
-  { icon: User, label: "Profil", path: "/profile", locked: false },
+  { icon: Compass, label: "Explorer", path: "/explorer", requiresAuth: false },
+  { icon: Search, label: "Recherche", path: "/search", requiresAuth: true },
+  { icon: PlusCircle, label: "Louer", path: "/create", requiresAuth: true },
+  { icon: MessageSquare, label: "Messages", path: "/messages", requiresAuth: true },
+  { icon: User, label: "Profil", path: "/profile", requiresAuth: false },
 ];
 
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { isLoggedIn } = useAuth();
 
   const handleNavClick = (item: NavItem) => {
-    if (item.locked) return;
+    if (item.requiresAuth && !isLoggedIn) {
+      toast({
+        title: "Connexion requise",
+        description: "Connecte-toi pour acceder a cette fonctionnalite.",
+        duration: 2500,
+      });
+      navigate("/profile");
+      return;
+    }
     navigate(item.path);
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl bg-card/90 border-t border-border/50 pb-safe">
-      <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-2">
+    <div className="fixed bottom-5 left-0 right-0 z-50 flex justify-center px-6 pointer-events-none">
+      <nav
+        className="pointer-events-auto flex items-center justify-around gap-1 px-4 py-2 rounded-[28px] border border-white/20"
+        style={{
+          background: "rgba(255, 255, 255, 0.72)",
+          backdropFilter: "blur(24px) saturate(180%)",
+          WebkitBackdropFilter: "blur(24px) saturate(180%)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.6)",
+        }}
+      >
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
+          const isLocked = item.requiresAuth && !isLoggedIn;
           const Icon = item.icon;
-
           return (
             <button
               key={item.path}
               onClick={() => handleNavClick(item)}
-              className={`relative flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] rounded-xl transition-colors duration-200 ${
-                item.locked
+              className={`relative flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] rounded-2xl px-2 transition-all duration-200 ${
+                isLocked
                   ? "opacity-30 cursor-not-allowed"
                   : isActive
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
               }`}
-              disabled={item.locked}
             >
-              <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
-              <span className="text-[10px] font-medium leading-none">{item.label}</span>
               {isActive && (
-                <motion.div
-                  layoutId="nav-indicator"
-                  className="absolute -top-px left-3 right-3 h-0.5 bg-primary rounded-full"
-                  transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                />
+                <div className="absolute inset-0 rounded-2xl" style={{ background: "rgba(0,0,0,0.06)" }} />
+              )}
+              <Icon size={20} />
+              <span className="text-[10px] font-medium relative z-10">{item.label}</span>
+              {isActive && (
+                <div className="absolute bottom-1.5 w-1 h-1 rounded-full bg-primary" />
               )}
             </button>
           );
         })}
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 };
 

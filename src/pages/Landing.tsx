@@ -2,27 +2,37 @@ import { motion } from "framer-motion";
 import { ArrowRight, Leaf, Shield, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.jpg";
+import { useToast } from "@/hooks/use-toast";
 
 const features = [
   {
     icon: Zap,
     title: "IA intelligente",
-    desc: "Détection automatique des objets et modération instantanée.",
+    desc: "Detection automatique des objets et moderation instantanee.",
   },
   {
     icon: Shield,
-    title: "Transactions sécurisées",
-    desc: "KYC adaptatif et paiements protégés pour chaque échange.",
+    title: "Transactions securisees",
+    desc: "KYC adaptatif et paiements proteges pour chaque echange.",
   },
   {
     icon: Leaf,
-    title: "Impact écologique",
-    desc: "Suivez votre empreinte carbone et contribuez à l'économie circulaire.",
+    title: "Impact ecologique",
+    desc: "Suivez votre empreinte carbone et contribuez a l'economie circulaire.",
   },
 ];
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleLogin = () => {
+    toast({
+      title: "Connexion bientot disponible",
+      description: "L'authentification Google et Apple arrive tres prochainement.",
+      duration: 3000,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -54,11 +64,11 @@ const Landing = () => {
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground leading-[1.1] tracking-tight mb-4">
-              Louez ce dont vous avez besoin, près de chez vous.
+              Louez ce dont vous avez besoin, pres de chez vous.
             </h1>
 
             <p className="text-lg text-primary-foreground/80 mb-8 leading-relaxed max-w-md">
-              La marketplace de location entre particuliers. Économisez de l'argent et réduisez votre impact environnemental.
+              La marketplace de location entre particuliers. Economisez de l'argent et reduisez votre impact environnemental.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3">
@@ -69,7 +79,10 @@ const Landing = () => {
                 Explorer les objets
                 <ArrowRight className="w-4 h-4" />
               </button>
-              <button className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary-foreground/15 text-primary-foreground font-medium text-base min-h-[48px] backdrop-blur-sm transition-all duration-200 hover:bg-primary-foreground/25 active:scale-[0.98]">
+              <button
+                onClick={handleLogin}
+                className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary-foreground/15 text-primary-foreground font-medium text-base min-h-[48px] backdrop-blur-sm transition-all duration-200 hover:bg-primary-foreground/25 active:scale-[0.98]"
+              >
                 Se connecter
               </button>
             </div>
@@ -87,7 +100,7 @@ const Landing = () => {
         >
           {[
             { value: "12k+", label: "Objets disponibles" },
-            { value: "8.2t", label: "CO₂ économisés" },
+            { value: "8.2t", label: "CO2 economies" },
             { value: "98%", label: "Satisfaction" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
@@ -102,10 +115,10 @@ const Landing = () => {
       <section className="container mx-auto px-5 py-16 space-y-8">
         <div>
           <h2 className="text-2xl font-bold text-foreground tracking-tight">
-            Comment ça marche
+            Comment ca marche
           </h2>
           <p className="text-muted-foreground mt-1">
-            Simple, sécurisé, écologique.
+            Simple, securise, ecologique.
           </p>
         </div>
 
@@ -137,10 +150,10 @@ const Landing = () => {
       <section className="container mx-auto px-5 pb-24">
         <div className="rounded-2xl bg-foreground p-8 text-center">
           <h2 className="text-2xl font-bold text-background tracking-tight mb-2">
-            Prêt à commencer ?
+            Pret a commencer ?
           </h2>
           <p className="text-background/70 mb-6">
-            Rejoignez la communauté et commencez à louer dès maintenant.
+            Rejoignez la communaute et commencez a louer des maintenant.
           </p>
           <button
             onClick={() => navigate("/explorer")}
